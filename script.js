@@ -47,10 +47,32 @@ document.addEventListener('DOMContentLoaded', function() {
     // Gallery Filter (only on gallery page)
     initGalleryFilter();
     
+    // Check Telegram configuration after page load
+    checkTelegramConfig();
+    
     // Form Validation and Telegram Integration (for all forms)
     initFormValidation();
     initAllFormsTelegram();
 });
+
+/**
+ * Check if Telegram configuration is loaded correctly
+ */
+function checkTelegramConfig() {
+    if (typeof BOT_TOKEN === 'undefined' || typeof CHAT_ID === 'undefined' || !BOT_TOKEN || !CHAT_ID) {
+        console.warn('⚠️ Telegram Bot configuration not found!');
+        console.warn('Values:', { 
+            BOT_TOKEN: typeof BOT_TOKEN !== 'undefined' ? 'defined (' + (BOT_TOKEN ? 'has value' : 'empty') + ')' : 'undefined',
+            CHAT_ID: typeof CHAT_ID !== 'undefined' ? 'defined (' + (CHAT_ID ? 'has value' : 'empty') + ')' : 'undefined'
+        });
+        console.warn('Make sure config.js is loaded before script.js in your HTML files');
+        console.warn('Check that config.js file exists and contains BOT_TOKEN and CHAT_ID variables');
+    } else {
+        console.log('✅ Telegram Bot configuration loaded successfully');
+        console.log('Bot Token:', BOT_TOKEN.substring(0, 10) + '...');
+        console.log('Chat ID:', CHAT_ID);
+    }
+}
 
 // Gallery Lightbox Functionality
 function initGalleryLightbox() {
@@ -215,6 +237,20 @@ if (typeof BOT_TOKEN === 'undefined' || typeof CHAT_ID === 'undefined') {
  */
 async function sendToTelegram(formData) {
     try {
+        // Check configuration first - this should have been checked at page load
+        if (typeof BOT_TOKEN === 'undefined' || typeof CHAT_ID === 'undefined' || !BOT_TOKEN || !CHAT_ID) {
+            console.error('❌ Telegram configuration missing: BOT_TOKEN or CHAT_ID');
+            console.error('Current values:', { 
+                BOT_TOKEN: typeof BOT_TOKEN !== 'undefined' ? 'defined (' + (BOT_TOKEN ? 'has value' : 'empty') + ')' : 'undefined',
+                CHAT_ID: typeof CHAT_ID !== 'undefined' ? 'defined (' + (CHAT_ID ? 'has value' : 'empty') + ')' : 'undefined'
+            });
+            console.error('Please check:');
+            console.error('1. config.js file exists in the same directory as HTML files');
+            console.error('2. config.js is loaded before script.js in HTML');
+            console.error('3. config.js contains: var BOT_TOKEN = "your_token"; var CHAT_ID = "your_id";');
+            throw new Error('Telegram bot configuration is missing. Please check config.js file is loaded.');
+        }
+        
         // Build formatted message
         let telegramMessage = `🆕 <b>New Contact Form Submission</b>\n\n`;
         telegramMessage += `👤 <b>Name:</b> ${escapeHtml(formData.name)}\n`;
@@ -245,12 +281,9 @@ async function sendToTelegram(formData) {
             parse_mode: 'HTML',
         };
         
-        // Validate payload
-        if (!BOT_TOKEN || !CHAT_ID) {
-            console.error('Telegram configuration missing: BOT_TOKEN or CHAT_ID');
-            console.error('Please create config.js from config.example.js and add your credentials');
-            throw new Error('Telegram bot configuration is missing. Please check config.js file.');
-        }
+        console.log('📤 Attempting to send message to Telegram...');
+        console.log('API URL:', telegramApiUrl.replace(BOT_TOKEN, 'BOT_TOKEN_HIDDEN'));
+        console.log('Chat ID:', CHAT_ID);
         
         if (!formData.name || !formData.phone) {
             console.error('Required form data missing: name or phone');
@@ -281,7 +314,8 @@ async function sendToTelegram(formData) {
             }
         } catch (directError) {
             // If direct request fails (likely CORS), try using CORS proxy
-            console.warn('Direct request failed (expected due to CORS), trying CORS proxy...');
+            console.warn('⚠️ Direct request failed (expected due to CORS):', directError.message);
+            console.warn('Trying CORS proxy methods...');
             
             // Try multiple proxy methods in sequence
             const proxyMethods = [
@@ -368,8 +402,16 @@ async function sendToTelegram(formData) {
             }
             
             // All proxies failed
-            console.error('All proxy methods failed. Last error:', lastError);
-            throw new Error(`All proxy attempts failed. ${lastError || 'Unknown error'}`);
+            console.error('❌ All proxy methods failed.');
+            console.error('Last error:', lastError);
+            console.error('');
+            console.error('🔧 Troubleshooting steps:');
+            console.error('1. Check browser console for detailed error messages');
+            console.error('2. Verify BOT_TOKEN and CHAT_ID in config.js are correct');
+            console.error('3. Test bot token: https://api.telegram.org/bot<YOUR_TOKEN>/getMe');
+            console.error('4. Check if your bot is active and can receive messages');
+            console.error('5. Consider using a backend server for more reliable delivery');
+            throw new Error(`All proxy attempts failed. ${lastError || 'Unknown error'}. See console for details.`);
         }
     } catch (error) {
         console.error('Error sending to Telegram:', error);
@@ -560,13 +602,21 @@ function initFormValidation() {
                     contactForm.reset();
                 } else {
                     // Show error message with helpful information
-                    console.error('Telegram sending failed - check console for details');
-                    showFormError('Unable to send message automatically. Please call us directly at (660) 281-7001 or (660) 619-0827. Your form data has been saved - try refreshing the page.');
+                    console.error('❌ Telegram sending failed - check console above for detailed error messages');
+                    console.error('');
+                    console.error('🔍 Troubleshooting checklist:');
+                    console.error('1. Open browser console (F12) and check for red error messages');
+                    console.error('2. Verify config.js file exists and is in the same directory');
+                    console.error('3. Check that config.js is loaded before script.js in HTML');
+                    console.error('4. Verify BOT_TOKEN and CHAT_ID values in config.js are correct');
+                    console.error('5. Test bot token: https://api.telegram.org/bot<YOUR_TOKEN>/getMe');
+                    showFormError('Unable to send message automatically. Please call us directly at (660) 281-7001 or (660) 619-0827. Open browser console (F12) for troubleshooting details.');
                     // Don't reset form so user can see their data
                 }
             } catch (error) {
-                console.error('Form submission error:', error);
-                showFormError('An error occurred. Please call us at (660) 281-7001 or (660) 619-0827 for immediate assistance.');
+                console.error('❌ Form submission error:', error);
+                console.error('Error stack:', error.stack);
+                showFormError('An error occurred: ' + error.message + '. Please call us at (660) 281-7001 or (660) 619-0827 for immediate assistance.');
             } finally {
             // Re-enable submit button
             if (submitButton) {
