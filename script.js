@@ -237,189 +237,70 @@ if (typeof BOT_TOKEN === 'undefined' || typeof CHAT_ID === 'undefined') {
  */
 async function sendToTelegram(formData) {
     try {
-        // Check configuration first - this should have been checked at page load
-        if (typeof BOT_TOKEN === 'undefined' || typeof CHAT_ID === 'undefined' || !BOT_TOKEN || !CHAT_ID) {
-            console.error('❌ Telegram configuration missing: BOT_TOKEN or CHAT_ID');
-            console.error('Current values:', { 
-                BOT_TOKEN: typeof BOT_TOKEN !== 'undefined' ? 'defined (' + (BOT_TOKEN ? 'has value' : 'empty') + ')' : 'undefined',
-                CHAT_ID: typeof CHAT_ID !== 'undefined' ? 'defined (' + (CHAT_ID ? 'has value' : 'empty') + ')' : 'undefined'
-            });
-            console.error('Please check:');
-            console.error('1. config.js file exists in the same directory as HTML files');
-            console.error('2. config.js is loaded before script.js in HTML');
-            console.error('3. config.js contains: var BOT_TOKEN = "your_token"; var CHAT_ID = "your_id";');
-            throw new Error('Telegram bot configuration is missing. Please check config.js file is loaded.');
-        }
-        
-        // Build formatted message
-        let telegramMessage = `🆕 <b>New Contact Form Submission</b>\n\n`;
-        telegramMessage += `👤 <b>Name:</b> ${escapeHtml(formData.name)}\n`;
-        telegramMessage += `📞 <b>Phone:</b> ${escapeHtml(formData.phone)}\n`;
-        
-        if (formData.email) {
-            telegramMessage += `📧 <b>Email:</b> ${escapeHtml(formData.email)}\n`;
-        }
-        
-        if (formData.address) {
-            telegramMessage += `📍 <b>Address:</b> ${escapeHtml(formData.address)}\n`;
-        }
-        
-        if (formData.message) {
-            telegramMessage += `\n💬 <b>Message:</b>\n${escapeHtml(formData.message)}\n`;
-        }
-        
-        telegramMessage += `\n━━━━━━━━━━━━━━━━━━━━\n`;
-        telegramMessage += `🕐 ${new Date().toLocaleString()}`;
-        
-        // Telegram Bot API URL
-        const telegramApiUrl = `https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`;
-        
-        // Request payload - ensure chat_id is treated as string (Telegram accepts both)
-        const payload = {
-            chat_id: String(CHAT_ID),
-            text: telegramMessage,
-            parse_mode: 'HTML',
-        };
-        
-        console.log('📤 Attempting to send message to Telegram...');
-        console.log('API URL:', telegramApiUrl.replace(BOT_TOKEN, 'BOT_TOKEN_HIDDEN'));
-        console.log('Chat ID:', CHAT_ID);
-        
+        // Validate form data first
         if (!formData.name || !formData.phone) {
             console.error('Required form data missing: name or phone');
             throw new Error('Required form fields are missing');
         }
+
+        console.log('📤 Attempting to send message via Vercel API...');
         
-        // Try direct request first (may fail due to CORS)
-        try {
-            const response = await fetch(telegramApiUrl, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(payload),
-            });
-            
-            if (response.ok) {
-                const data = await response.json();
-                if (data.ok) {
-                    console.log('Message sent successfully to Telegram');
-                    return true;
-                } else {
-                    console.error('Telegram API returned error:', data);
-                    throw new Error(data.description || 'Telegram API error');
-                }
-            } else {
-                throw new Error(`HTTP ${response.status}: ${response.statusText}`);
-            }
-        } catch (directError) {
-            // If direct request fails (likely CORS), try using CORS proxy
-            console.warn('⚠️ Direct request failed (expected due to CORS):', directError.message);
-            console.warn('Trying CORS proxy methods...');
-            
-            // Try multiple proxy methods in sequence
-            const proxyMethods = [
-                // Method 1: corsproxy.io with JSON
-                {
-                    name: 'corsproxy.io (JSON)',
-                    getUrl: () => `https://corsproxy.io/?${encodeURIComponent(telegramApiUrl)}`,
-                    getOptions: () => ({
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify(payload),
-                    }),
-                    parseResponse: async (res) => {
-                        if (!res.ok) throw new Error(`HTTP ${res.status}`);
-                        return await res.json();
-                    },
-                },
-                // Method 2: api.allorigins.win with form data
-                {
-                    name: 'api.allorigins.win (Form)',
-                    getUrl: () => `https://api.allorigins.win/post?url=${encodeURIComponent(telegramApiUrl)}`,
-                    getOptions: () => {
-                        const formData = new URLSearchParams();
-                        formData.append('chat_id', String(CHAT_ID));
-                        formData.append('text', telegramMessage);
-                        formData.append('parse_mode', 'HTML');
-                        return {
-                            method: 'POST',
-                            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-                            body: formData.toString(),
-                        };
-                    },
-                    parseResponse: async (res) => {
-                        if (!res.ok) throw new Error(`HTTP ${res.status}`);
-                        const data = await res.json();
-                        return JSON.parse(data.contents);
-                    },
-                },
-                // Method 3: corsproxy.io with form data (alternative)
-                {
-                    name: 'corsproxy.io (Form)',
-                    getUrl: () => `https://corsproxy.io/?${encodeURIComponent(telegramApiUrl)}`,
-                    getOptions: () => {
-                        const formData = new URLSearchParams();
-                        formData.append('chat_id', String(CHAT_ID));
-                        formData.append('text', telegramMessage);
-                        formData.append('parse_mode', 'HTML');
-                        return {
-                            method: 'POST',
-                            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-                            body: formData.toString(),
-                        };
-                    },
-                    parseResponse: async (res) => {
-                        if (!res.ok) throw new Error(`HTTP ${res.status}`);
-                        return await res.json();
-                    },
-                },
-            ];
-            
-            let lastError = null;
-            
-            for (const method of proxyMethods) {
-                try {
-                    console.log(`Trying ${method.name}...`);
-                    const proxyUrl = method.getUrl();
-                    const options = method.getOptions();
-                    
-                    const proxyResponse = await fetch(proxyUrl, options);
-                    const telegramResponse = await method.parseResponse(proxyResponse);
-                    
-                    if (telegramResponse.ok) {
-                        console.log(`✅ Message sent successfully via ${method.name}`);
-                        return true;
-                    } else {
-                        lastError = `Telegram API error: ${telegramResponse.description || JSON.stringify(telegramResponse)}`;
-                        console.error(`${method.name} - Telegram API error:`, telegramResponse);
-                    }
-                } catch (proxyError) {
-                    lastError = `${method.name} failed: ${proxyError.message}`;
-                    console.error(`${method.name} error:`, proxyError);
-                    // Continue to next method
-                }
-            }
-            
-            // All proxies failed
-            console.error('❌ All proxy methods failed.');
-            console.error('Last error:', lastError);
-            console.error('');
-            console.error('🔧 Troubleshooting steps:');
-            console.error('1. Check browser console for detailed error messages');
-            console.error('2. Verify BOT_TOKEN and CHAT_ID in config.js are correct');
-            console.error('3. Test bot token: https://api.telegram.org/bot<YOUR_TOKEN>/getMe');
-            console.error('4. Check if your bot is active and can receive messages');
-            console.error('5. Consider using a backend server for more reliable delivery');
-            throw new Error(`All proxy attempts failed. ${lastError || 'Unknown error'}. See console for details.`);
+        // Use Vercel serverless function (works reliably, no CORS issues)
+        // If BOT_TOKEN and CHAT_ID are in config.js, send them in the request for development
+        // In production, they should be set as environment variables in Vercel
+        const apiEndpoint = '/api/telegram';
+        
+        const requestBody = {
+            name: formData.name,
+            phone: formData.phone,
+            email: formData.email || null,
+            message: formData.message || null,
+            address: formData.address || null,
+            // Include tokens for fallback (if not set in Vercel env vars)
+            // In production, these should be set in Vercel environment variables
+            ...(typeof BOT_TOKEN !== 'undefined' && BOT_TOKEN ? { botToken: BOT_TOKEN } : {}),
+            ...(typeof CHAT_ID !== 'undefined' && CHAT_ID ? { chatId: CHAT_ID } : {}),
+        };
+        
+        const response = await fetch(apiEndpoint, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(requestBody),
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+            console.error('API error:', data);
+            throw new Error(data.error || `HTTP ${response.status}: ${response.statusText}`);
         }
+
+        if (data.success) {
+            console.log('✅ Message sent successfully to Telegram via API');
+            return true;
+        } else {
+            console.error('API returned unsuccessful response:', data);
+            throw new Error(data.error || 'Unknown API error');
+        }
+
     } catch (error) {
-        console.error('Error sending to Telegram:', error);
+        console.error('❌ Error sending to Telegram:', error);
         console.error('Error details:', {
             message: error.message,
-            stack: error.stack,
-            formData: formData
+            stack: error.stack
         });
+        
+        // Provide helpful error message
+        if (error.message.includes('Failed to fetch') || error.message.includes('NetworkError')) {
+            console.error('');
+            console.error('🔧 Network error detected. Possible causes:');
+            console.error('1. API endpoint not found - make sure /api/telegram.js exists in api/ folder');
+            console.error('2. Check that you are deploying on Vercel (serverless functions work there)');
+            console.error('3. For local development, you may need to run: vercel dev');
+        }
+        
         return false;
     }
 }
