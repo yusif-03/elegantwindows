@@ -1,0 +1,19 @@
+# Telegram Bot Configuration (contains sensitive tokens)
+config.js
+
+# Test files
+test-telegram.html
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Logs
+*.log
+

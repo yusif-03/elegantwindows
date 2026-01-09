@@ -1,0 +1,22 @@
+{
+    "name": "Elegant Windows & Doors",
+    "short_name": "Elegant Windows",
+    "description": "Quality window and door installation in Missouri",
+    "icons": [
+        {
+            "src": "images/logo.jpg",
+            "sizes": "192x192",
+            "type": "image/jpeg"
+        },
+        {
+            "src": "images/logo.jpg",
+            "sizes": "512x512",
+            "type": "image/jpeg"
+        }
+    ],
+    "theme_color": "#c9a961",
+    "background_color": "#ffffff",
+    "display": "standalone",
+    "start_url": "/"
+}
+
