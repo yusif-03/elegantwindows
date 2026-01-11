@@ -327,12 +327,19 @@ async function sendToTelegram(formData) {
             console.warn('⚠️ Vercel API endpoint not available, trying fallback method...');
             console.warn('API error:', apiError.message);
             
-            // Fallback: use direct Telegram API with proxy (only if config.js tokens are available)
-            if (typeof BOT_TOKEN !== 'undefined' && typeof CHAT_ID !== 'undefined' && BOT_TOKEN && CHAT_ID) {
-                return await sendToTelegramFallback(formData);
-            } else {
-                throw new Error('API endpoint not available and no fallback tokens configured');
-            }
+            // API endpoint is not available (404) - CORS proxies don't work reliably
+            // User must configure Vercel Serverless Function
+            console.error('');
+            console.error('❌ Vercel API endpoint not found (404)');
+            console.error('⚠️ CORS proxies are blocked by browser security');
+            console.error('');
+            console.error('🔧 SOLUTION: Configure Vercel Serverless Function');
+            console.error('1. Add BOT_TOKEN and CHAT_ID to Vercel Environment Variables');
+            console.error('2. Make sure /api/telegram.js file is deployed');
+            console.error('3. Redeploy project in Vercel');
+            console.error('4. See QUICK_FIX.md for detailed instructions');
+            console.error('');
+            throw new Error('Vercel API endpoint not configured. Please set up serverless function (see console for details)');
         }
 
     } catch (error) {
