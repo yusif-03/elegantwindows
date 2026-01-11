@@ -262,27 +262,77 @@ async function sendToTelegram(formData) {
             ...(typeof CHAT_ID !== 'undefined' && CHAT_ID ? { chatId: CHAT_ID } : {}),
         };
         
-        const response = await fetch(apiEndpoint, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(requestBody),
-        });
+        // Try Vercel API endpoint first
+        let response;
+        let data;
+        
+        try {
+            response = await fetch(apiEndpoint, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(requestBody),
+            });
 
-        const data = await response.json();
+            // Check status first - if 404, API endpoint doesn't exist
+            if (response.status === 404) {
+                console.warn('⚠️ API endpoint returned 404 - endpoint not found');
+                throw new Error('API endpoint not found (404)');
+            }
 
-        if (!response.ok) {
-            console.error('API error:', data);
-            throw new Error(data.error || `HTTP ${response.status}: ${response.statusText}`);
-        }
+            // Check if response is JSON or HTML
+            const contentType = response.headers.get('content-type') || '';
+            let responseText = '';
+            
+            try {
+                responseText = await response.text();
+            } catch (textError) {
+                console.warn('⚠️ Could not read response text:', textError);
+                throw new Error('Could not read API response');
+            }
 
-        if (data.success) {
-            console.log('✅ Message sent successfully to Telegram via API');
-            return true;
-        } else {
-            console.error('API returned unsuccessful response:', data);
-            throw new Error(data.error || 'Unknown API error');
+            // Try to parse as JSON only if Content-Type says it's JSON
+            if (contentType.includes('application/json')) {
+                try {
+                    data = JSON.parse(responseText);
+                } catch (jsonError) {
+                    console.warn('⚠️ Response claims to be JSON but parsing failed:', jsonError);
+                    console.warn('Response text:', responseText.substring(0, 200));
+                    throw new Error('Invalid JSON response from API');
+                }
+            } else {
+                // Response is not JSON (probably HTML 404 page or error)
+                console.warn('⚠️ API endpoint returned non-JSON response');
+                console.warn('Content-Type:', contentType);
+                console.warn('Response:', responseText.substring(0, 200));
+                throw new Error(`API endpoint returned non-JSON response. Status: ${response.status}`);
+            }
+
+            if (!response.ok) {
+                console.error('API error:', data);
+                throw new Error(data.error || `HTTP ${response.status}: ${response.statusText}`);
+            }
+
+            if (data.success) {
+                console.log('✅ Message sent successfully to Telegram via API');
+                return true;
+            } else {
+                console.error('API returned unsuccessful response:', data);
+                throw new Error(data.error || 'Unknown API error');
+            }
+            
+        } catch (apiError) {
+            // If API is not available (404, network error, etc.), fallback to direct method with proxy
+            console.warn('⚠️ Vercel API endpoint not available, trying fallback method...');
+            console.warn('API error:', apiError.message);
+            
+            // Fallback: use direct Telegram API with proxy (only if config.js tokens are available)
+            if (typeof BOT_TOKEN !== 'undefined' && typeof CHAT_ID !== 'undefined' && BOT_TOKEN && CHAT_ID) {
+                return await sendToTelegramFallback(formData);
+            } else {
+                throw new Error('API endpoint not available and no fallback tokens configured');
+            }
         }
 
     } catch (error) {
@@ -292,16 +342,73 @@ async function sendToTelegram(formData) {
             stack: error.stack
         });
         
-        // Provide helpful error message
-        if (error.message.includes('Failed to fetch') || error.message.includes('NetworkError')) {
-            console.error('');
-            console.error('🔧 Network error detected. Possible causes:');
-            console.error('1. API endpoint not found - make sure /api/telegram.js exists in api/ folder');
-            console.error('2. Check that you are deploying on Vercel (serverless functions work there)');
-            console.error('3. For local development, you may need to run: vercel dev');
+        return false;
+    }
+}
+
+/**
+ * Fallback method: Send directly to Telegram using CORS proxy (if API endpoint is not available)
+ */
+async function sendToTelegramFallback(formData) {
+    try {
+        console.log('📤 Attempting fallback: sending via CORS proxy...');
+        
+        // Build formatted message
+        let telegramMessage = `🆕 <b>New Contact Form Submission</b>\n\n`;
+        telegramMessage += `👤 <b>Name:</b> ${escapeHtml(formData.name)}\n`;
+        telegramMessage += `📞 <b>Phone:</b> ${escapeHtml(formData.phone)}\n`;
+        
+        if (formData.email) {
+            telegramMessage += `📧 <b>Email:</b> ${escapeHtml(formData.email)}\n`;
         }
         
-        return false;
+        if (formData.address) {
+            telegramMessage += `📍 <b>Address:</b> ${escapeHtml(formData.address)}\n`;
+        }
+        
+        if (formData.message) {
+            telegramMessage += `\n💬 <b>Message:</b>\n${escapeHtml(formData.message)}\n`;
+        }
+        
+        telegramMessage += `\n━━━━━━━━━━━━━━━━━━━━\n`;
+        telegramMessage += `🕐 ${new Date().toLocaleString()}`;
+        
+        const telegramApiUrl = `https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`;
+        
+        // Try using a simple CORS proxy
+        const proxyUrl = `https://api.allorigins.win/post?url=${encodeURIComponent(telegramApiUrl)}`;
+        
+        const formDataObj = new URLSearchParams();
+        formDataObj.append('chat_id', String(CHAT_ID));
+        formDataObj.append('text', telegramMessage);
+        formDataObj.append('parse_mode', 'HTML');
+        
+        const response = await fetch(proxyUrl, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+            },
+            body: formDataObj.toString(),
+        });
+        
+        if (response.ok) {
+            const proxyData = await response.json();
+            const telegramResponse = JSON.parse(proxyData.contents);
+            
+            if (telegramResponse.ok) {
+                console.log('✅ Message sent successfully via fallback proxy method');
+                return true;
+            } else {
+                console.error('Telegram API error via proxy:', telegramResponse);
+                throw new Error(telegramResponse.description || 'Telegram API error');
+            }
+        } else {
+            throw new Error(`Proxy HTTP ${response.status}: ${response.statusText}`);
+        }
+        
+    } catch (fallbackError) {
+        console.error('❌ Fallback method also failed:', fallbackError);
+        throw fallbackError;
     }
 }
 
