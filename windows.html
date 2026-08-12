@@ -1,480 +1,290 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Premium replacement windows in Missouri. Double-hung, casement, sliding, and picture windows. Energy-efficient, noise-reducing, professionally installed.">
-    <title>Premium Windows — Energy Efficient Replacement Windows | Elegant Windows & Doors</title>
-    
-    <!-- Favicon -->
-    <link rel="icon" type="image/png" href="images/logo.png">
-    <link rel="icon" type="image/x-icon" href="favicon.ico">
-    <link rel="apple-touch-icon" sizes="180x180" href="images/logo.png">
-    <link rel="icon" type="image/png" sizes="32x32" href="images/logo.png">
-    <link rel="icon" type="image/png" sizes="16x16" href="images/logo.png">
-    <link rel="manifest" href="site.webmanifest">
-    <meta name="theme-color" content="#c9a961">
-    
-    <script src="https://cdn.tailwindcss.com"></script>
-    
-    <style>
-        /* Custom color scheme - Gold & Black Premium (Softer) */
-        :root {
-            --primary-black: #2a2a2a;
-            --deep-black: #1a1a1a;
-            --accent-gold: #c9a961;
-            --gold-hover: #d4af37;
-            --gold-dark: #b8941f;
-            --bg-dark: #1f1f1f;
-            --bg-card: #2d2d2d;
-        }
-        
-        .accent-line {
-            height: 4px;
-            width: 60px;
-            background-color: #c9a961;
-            margin: 1rem auto;
-        }
-        
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-        }
-        
-        .btn-primary {
-            background: linear-gradient(135deg, #b8941f 0%, #d4af37 100%);
-            color: #000000;
-            border: 2px solid #b8941f;
-            transition: all 0.3s ease;
-            font-weight: 700;
-            box-shadow: 0 4px 12px rgba(184, 148, 31, 0.4);
-        }
-        
-        .btn-primary:hover {
-            background: linear-gradient(135deg, #d4af37 0%, #f4d03f 100%);
-            transform: translateY(-2px);
-            box-shadow: 0 8px 24px rgba(184, 148, 31, 0.6);
-            border-color: #d4af37;
-        }
-        
-        html {
-            scroll-behavior: smooth;
-        }
-        
-        .sticky-header {
-            position: sticky;
-            top: 0;
-            z-index: 1000;
-            backdrop-filter: blur(10px);
-            background-color: rgba(255, 255, 255, 0.98);
-            border-bottom: 1px solid rgba(201, 169, 97, 0.2);
-        }
-        
-        /* Lightbox Modal */
-        .lightbox {
-            display: none;
-            position: fixed;
-            z-index: 9999;
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0,0,0,0.95);
-            overflow: auto;
-        }
-        
-        .lightbox.active {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        
-        .lightbox-content {
-            position: relative;
-            max-width: 90%;
-            max-height: 90%;
-            margin: auto;
-        }
-        
-        .lightbox-content img {
-            width: 100%;
-            height: auto;
-            max-height: 90vh;
-            object-fit: contain;
-            border-radius: 8px;
-        }
-        
-        .lightbox-close {
-            position: absolute;
-            top: 20px;
-            right: 35px;
-            color: white;
-            font-size: 40px;
-            font-weight: bold;
-            cursor: pointer;
-            z-index: 10000;
-            transition: color 0.3s;
-        }
-        
-        .lightbox-close:hover {
-            color: #c9a961;
-        }
-        
-        .zoomable-image {
-            cursor: pointer;
-            transition: transform 0.3s, opacity 0.3s;
-        }
-        
-        .zoomable-image:hover {
-            opacity: 0.9;
-            transform: scale(1.02);
-        }
-        
-        @media (max-width: 768px) {
-            .lightbox-close {
-                font-size: 30px;
-                top: 10px;
-                right: 20px;
-            }
-        }
-    </style>
-</head>
-<body class="bg-white">
-    
-    <!-- Sticky Header -->
-    <header class="sticky-header shadow-md">
-        <nav class="container mx-auto px-4 py-2">
-            <div class="flex items-center justify-between w-full">
-                <div class="flex items-center">
-                    <a href="/" class="hover:opacity-80 transition">
-                        <img src="images/logo.png" alt="Elegant Windows & Doors" class="h-16 md:h-24 w-auto">
-                    </a>
-                </div>
-                
-                <ul class="hidden md:flex items-center space-x-4 lg:space-x-6 flex-1 justify-center">
-                    <li><a href="/" class="text-gray-700 hover:text-yellow-600 transition text-base lg:text-lg">Home</a></li>
-                    <li><a href="windows.html" class="font-semibold hover:opacity-80 transition text-base lg:text-lg" style="color: #c9a961;">Windows</a></li>
-                    <li><a href="doors.html" class="text-gray-700 hover:text-yellow-600 transition text-base lg:text-lg">Doors</a></li>
-                    <li><a href="certifications.html" class="text-gray-700 hover:text-yellow-600 transition text-base lg:text-lg">Certifications</a></li>
-                    <li class="hidden"><a href="gallery.html" class="text-gray-700 hover:text-yellow-600 transition text-base lg:text-lg">Gallery</a></li>
-                </ul>
-                
-                <div class="hidden md:flex items-center">
-                    <a href="contact.html" class="bg-yellow-600 text-white px-4 py-2 lg:px-5 lg:py-2.5 rounded-lg hover:bg-yellow-500 transition font-bold shadow-md text-base lg:text-lg">Free Estimate</a>
-                </div>
-                
-                <button id="mobileMenuBtn" class="md:hidden text-gray-800 text-2xl">
-                    ☰
-                </button>
-            </div>
-            
-            <ul id="mobileMenu" class="hidden md:hidden mt-4 space-y-3 pb-4">
-                <li><a href="/" class="block text-gray-700 hover:text-yellow-600">Home</a></li>
-                <li><a href="windows.html" class="block font-semibold" style="color: #c9a961;">Windows</a></li>
-                <li><a href="doors.html" class="block text-gray-700 hover:text-yellow-600">Doors</a></li>
-                <li><a href="certifications.html" class="block text-gray-700 hover:text-yellow-600">Certifications</a></li>
-                <li class="hidden"><a href="gallery.html" class="block text-gray-700 hover:text-yellow-600">Gallery</a></li>
-                <li><a href="contact.html" class="block bg-yellow-600 text-white px-4 py-2 rounded-lg text-center font-bold shadow-md">Free Estimate</a></li>
-            </ul>
-        </nav>
-    </header>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="European-engineered uPVC and aluminum window systems, professionally installed in Central Missouri. Series 58, 71, and 80 profiles, Low-E argon glazing, and custom finishes.">
+<title>Premium Windows — uPVC &amp; Aluminum Systems | Elegant Windows &amp; Doors</title>
+<link rel="canonical" href="https://elegantwindowsdoors.com/windows.html">
 
-    <!-- Page Header -->
-    <section class="bg-gradient-to-br from-white via-gray-50 to-white py-16 px-4 relative overflow-hidden">
-        <div class="absolute inset-0 bg-gradient-to-br from-yellow-600/5 via-transparent to-yellow-600/5"></div>
-        <div class="container mx-auto text-center relative z-10">
-            <h1 class="text-4xl md:text-5xl font-bold mb-4" style="color: #c9a961;">Premium Replacement Windows</h1>
-            <p class="text-xl md:text-2xl text-gray-700">Energy-efficient • Noise-reducing • Professionally installed</p>
-        </div>
-    </section>
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Elegant Windows & Doors">
+<meta property="og:title" content="Premium Windows — uPVC & Aluminum Systems | Elegant Windows & Doors">
+<meta property="og:description" content="European-engineered uPVC and aluminum window systems, professionally installed in Central Missouri.">
+<meta property="og:image" content="https://elegantwindowsdoors.com/images/projects/triple-window-row-bronze-frame.jpg">
+<meta property="og:url" content="https://elegantwindowsdoors.com/windows.html">
 
-    <!-- Window Types -->
-    <section id="window-types-section" class="py-16 px-4 bg-white">
-        <div class="container mx-auto">
-            <div class="text-center mb-12">
-                <h2 class="text-3xl md:text-4xl font-bold mb-4" style="color: #c9a961;">Window Styles We Offer</h2>
-                <div class="accent-line"></div>
-            </div>
-            
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-12 mb-16">
-                <!-- Double-Hung -->
-                <div class="bg-white border border-yellow-200 rounded-lg shadow-md overflow-hidden">
-                    <div class="h-64 overflow-hidden bg-gray-100 flex items-center justify-center">
-                        <img src="images/double-hung-window.jpg" alt="Double-Hung Windows - classic American design with vertical sliding sashes" class="window-image w-full h-full object-cover" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
-                        <div style="display: none; flex-direction: column; align-items: center; justify-content: center; height: 100%;" class="text-5xl text-gray-400">
-                            <div>🪟</div>
-                            <p class="text-sm text-gray-500 mt-2">Double-Hung Window</p>
-                        </div>
-                    </div>
-                    <div class="p-8">
-                    <h3 class="text-2xl font-bold mb-4" style="color: #c9a961;">Double-Hung Windows</h3>
-                    <p class="text-gray-600 mb-4">
-                        The most popular choice for American homes. Both sashes slide vertically, making them easy to clean from inside your home. Perfect for traditional and modern architecture alike.
-                    </p>
-                    <ul class="list-disc list-inside text-gray-600 space-y-2 mb-6">
-                        <li>Easy to clean and maintain</li>
-                        <li>Excellent ventilation control</li>
-                        <li>Classic American design</li>
-                        <li>Available in various frame materials</li>
-                    </ul>
-                    </div>
-                </div>
-                
-                <!-- Casement -->
-                <div class="bg-white border border-yellow-200 rounded-lg shadow-md overflow-hidden">
-                    <div class="h-64 overflow-hidden bg-gray-100 flex items-center justify-center">
-                        <img src="images/casement-window.jpg" alt="Casement Windows - hinged windows opening outward with excellent ventilation" class="window-image w-full h-full object-cover" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
-                        <div style="display: none; flex-direction: column; align-items: center; justify-content: center; height: 100%;" class="text-5xl text-gray-400">
-                            <div>🪟</div>
-                            <p class="text-sm text-gray-500 mt-2">Casement Window</p>
-                        </div>
-                    </div>
-                    <div class="p-8">
-                    <h3 class="text-2xl font-bold mb-4" style="color: #c9a961;">Casement Windows</h3>
-                    <p class="text-gray-600 mb-4">
-                        Hinged on the side and open outward like a door. These windows provide excellent airflow and unobstructed views. Ideal for modern homes and hard-to-reach areas.
-                    </p>
-                    <ul class="list-disc list-inside text-gray-600 space-y-2 mb-6">
-                        <li>Maximum ventilation capacity</li>
-                        <li>Superior weather sealing</li>
-                        <li>Unobstructed views</li>
-                        <li>Energy-efficient design</li>
-                    </ul>
-                    </div>
-                </div>
-                
-                <!-- Sliding -->
-                <div class="bg-white border border-yellow-200 rounded-lg shadow-md overflow-hidden">
-                    <div class="h-64 overflow-hidden bg-gray-100 flex items-center justify-center">
-                        <img src="images/sliding-window.jpg" alt="Sliding Windows - horizontal sliding panels perfect for wide openings" class="window-image w-full h-full object-cover" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
-                        <div style="display: none; flex-direction: column; align-items: center; justify-content: center; height: 100%;" class="text-5xl text-gray-400">
-                            <div>🪟</div>
-                            <p class="text-sm text-gray-500 mt-2">Sliding Window</p>
-                        </div>
-                    </div>
-                    <div class="p-8">
-                    <h3 class="text-2xl font-bold mb-4" style="color: #c9a961;">Sliding Windows</h3>
-                    <p class="text-gray-600 mb-4">
-                        Also known as glider windows, these open horizontally by sliding one panel past the other. Great for wide openings and contemporary home designs.
-                    </p>
-                    <ul class="list-disc list-inside text-gray-600 space-y-2 mb-6">
-                        <li>Space-saving design</li>
-                        <li>Wide viewing area</li>
-                        <li>Easy operation</li>
-                        <li>Perfect for bedrooms and living areas</li>
-                    </ul>
-                    </div>
-                </div>
-                
-                <!-- Picture -->
-                <div class="bg-white border border-yellow-200 rounded-lg shadow-md overflow-hidden">
-                    <div class="h-64 overflow-hidden bg-gray-100 flex items-center justify-center">
-                        <img src="images/picture-window.jpg" alt="Picture Windows - large fixed windows that frame beautiful views and maximize natural light" class="window-image w-full h-full object-cover" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
-                        <div style="display: none; flex-direction: column; align-items: center; justify-content: center; height: 100%;" class="text-5xl text-gray-400">
-                            <div>🪟</div>
-                            <p class="text-sm text-gray-500 mt-2">Picture Window</p>
-                        </div>
-                    </div>
-                    <div class="p-8">
-                    <h3 class="text-2xl font-bold mb-4" style="color: #c9a961;">Picture Windows</h3>
-                    <p class="text-gray-600 mb-4">
-                        Large, fixed windows that don't open, designed to frame beautiful views and let in maximum natural light. Perfect for showcasing your landscape or cityscape.
-                    </p>
-                    <ul class="list-disc list-inside text-gray-600 space-y-2 mb-6">
-                        <li>Maximum natural light</li>
-                        <li>Unobstructed views</li>
-                        <li>Superior energy efficiency</li>
-                        <li>Low maintenance</li>
-                    </ul>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
+<link rel="icon" href="/favicon.ico" sizes="any">
+<link rel="icon" type="image/png" sizes="32x32" href="images/logo/favicon-32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="images/logo/favicon-16.png">
+<link rel="apple-touch-icon" sizes="180x180" href="images/logo/favicon-180.png">
+<link rel="manifest" href="site.webmanifest">
+<meta name="theme-color" content="#0b0b0b">
 
-    <!-- Energy Efficiency Section -->
-    <section class="py-16 bg-gray-50 px-4">
-        <div class="container mx-auto">
-            <div class="text-center mb-12">
-                <h2 class="text-3xl md:text-4xl font-bold mb-4" style="color: #c9a961;">Energy Efficiency & Performance</h2>
-                <div class="accent-line"></div>
-            </div>
-            
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
-                <div class="bg-white border border-yellow-200 p-8 rounded-lg shadow-md text-center">
-                    <div class="text-4xl mb-4">❄️</div>
-                    <h3 class="text-xl font-bold mb-3" style="color: #c9a961;">Lower Energy Bills</h3>
-                    <p class="text-gray-600">
-                        High-performance windows with multiple panes and Low-E coatings keep your home warmer in winter and cooler in summer. Many homeowners see 15-30% reduction in heating and cooling costs.
-                    </p>
-                </div>
-                
-                <div class="bg-white border border-yellow-200 p-8 rounded-lg shadow-md text-center">
-                    <div class="text-4xl mb-4">🔇</div>
-                    <h3 class="text-xl font-bold mb-3" style="color: #c9a961;">Noise Reduction</h3>
-                    <p class="text-gray-600">
-                        Advanced glazing technology significantly reduces outside noise. Sleep better, work better, and enjoy peace and quiet even in busy neighborhoods or near highways.
-                    </p>
-                </div>
-                
-                <div class="bg-white border border-yellow-200 p-8 rounded-lg shadow-md text-center">
-                    <div class="text-4xl mb-4">☀️</div>
-                    <h3 class="text-xl font-bold mb-3" style="color: #c9a961;">UV Protection</h3>
-                    <p class="text-gray-600">
-                        Protect your furniture, flooring, and artwork from harmful UV rays. Our windows filter out 99% of UV radiation while still letting in beautiful natural light.
-                    </p>
-                </div>
-            </div>
-            
-            <!-- Performance Values Explanation -->
-            <div class="bg-white border border-yellow-200 p-8 md:p-12 rounded-lg shadow-lg">
-                <h3 class="text-2xl font-bold mb-6 text-center" style="color: #c9a961;">Understanding Window Performance Ratings</h3>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-                    <div>
-                        <h4 class="text-xl font-semibold text-gray-800 mb-3">U-Factor (Insulation)</h4>
-                        <p class="text-gray-600 mb-4">
-                            Measures how well the window prevents heat from escaping. Lower numbers are better. Our windows typically achieve U-factors below 0.30, meaning excellent insulation in Missouri's variable climate.
-                        </p>
-                    </div>
-                    
-                    <div>
-                        <h4 class="text-xl font-semibold text-gray-800 mb-3">Solar Heat Gain Coefficient (SHGC)</h4>
-                        <p class="text-gray-600 mb-4">
-                            Shows how much solar heat passes through the window. In Missouri, we recommend windows with moderate SHGC (around 0.30-0.40) to balance heat gain in winter with cooling in summer.
-                        </p>
-                    </div>
-                    
-                    <div>
-                        <h4 class="text-xl font-semibold text-gray-800 mb-3">Visible Transmittance (VT)</h4>
-                        <p class="text-gray-600 mb-4">
-                            The amount of visible light that passes through. Our windows maintain high VT (typically 0.50-0.60) so you get plenty of natural light while still enjoying energy savings.
-                        </p>
-                    </div>
-                    
-                    <div>
-                        <h4 class="text-xl font-semibold text-gray-800 mb-3">Air Leakage</h4>
-                        <p class="text-gray-600 mb-4">
-                            Measures how much air passes through the window. Our professionally installed windows achieve very low air leakage rates, keeping drafts out and your HVAC system working efficiently.
-                        </p>
-                    </div>
-                </div>
-                <div class="mt-8 text-center">
-                    <a href="certifications.html" class="text-yellow-600 font-semibold hover:text-yellow-700">
-                        Learn more about certifications and standards →
-                    </a>
-                </div>
-            </div>
-        </div>
-    </section>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="stylesheet" href="styles.css">
 
-    <!-- CTA Section -->
-    <section class="py-16 bg-gradient-to-br from-gray-50 to-white px-4 border-t border-yellow-200">
-        <div class="container mx-auto text-center">
-            <h2 class="text-3xl md:text-4xl font-bold mb-6" style="color: #c9a961;">Ready to Upgrade Your Windows?</h2>
-            <p class="text-xl text-gray-700 mb-8 max-w-2xl mx-auto">
-                Get a free, no-obligation estimate. We'll help you choose the perfect windows for your home, explain all your options, and provide transparent pricing.
-            </p>
-            <a href="contact.html" class="btn-primary px-8 py-4 rounded-lg text-lg inline-block">
-                Get a Free Estimate
-            </a>
-        </div>
-    </section>
-
-    <!-- Footer -->
-    <footer class="bg-white text-gray-600 py-12 px-4 border-t border-yellow-200">
-        <div class="container mx-auto">
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
-                <div>
-                    <h3 class="text-xl font-bold mb-4" style="color: #c9a961;">Elegant Windows and Doors</h3>
-                    <p class="mb-2 text-gray-600">Based in Sedalia, MO</p>
-                    <p class="mb-2 text-gray-600">Serving Sedalia, Kansas City, Columbia, Jefferson City & surrounding areas</p>
-                    <p class="text-sm text-gray-500">Licensed & Insured</p>
-                </div>
-                
-                <div>
-                    <h4 class="font-semibold mb-4" style="color: #c9a961;">Contact</h4>
-                    <p class="mb-2 text-gray-600">EN: <a href="tel:6602817001" class="hover:text-yellow-600 transition">(660) 281-7001</a></p>
-                    <p class="mb-2 text-gray-600">RU: <a href="tel:6606190827" class="hover:text-yellow-600 transition">(660) 619-0827</a></p>
-                    <p class="mb-2 text-gray-600">Email: info@elegantwindowsdoors.com</p>
-                </div>
-            </div>
-            
-            <div class="border-t border-gray-200 pt-8 text-center text-sm text-gray-500">
-                <p>&copy; 2024 Elegant Windows and Doors. All rights reserved.</p>
-            </div>
-        </div>
-    </footer>
-
-    <!-- Lightbox Modal -->
-    <div id="lightbox" class="lightbox">
-        <span class="lightbox-close" id="lightboxClose">&times;</span>
-        <div class="lightbox-content">
-            <div id="lightboxImage"></div>
-            <div id="lightboxCaption" class="text-white text-center mt-4"></div>
-        </div>
-    </div>
-
-    <!-- Load configuration first (config.js is in .gitignore and contains sensitive tokens) -->
-    <script src="config.js"></script>
-    <script src="script.js"></script>
-    <script>
-        // Lightbox for window images
-        document.addEventListener('DOMContentLoaded', function() {
-            const windowImages = document.querySelectorAll('#window-types-section img, .window-image');
-            const lightbox = document.getElementById('lightbox');
-            const lightboxImage = document.getElementById('lightboxImage');
-            const lightboxCaption = document.getElementById('lightboxCaption');
-            const lightboxClose = document.getElementById('lightboxClose');
-            
-            if (!windowImages.length || !lightbox) return;
-            
-            // Make images zoomable
-            windowImages.forEach(img => {
-                img.classList.add('zoomable-image');
-                img.addEventListener('click', function() {
-                    const src = this.src;
-                    const alt = this.alt || 'Window image';
-                    lightboxImage.innerHTML = `<img src="${src}" alt="${alt}">`;
-                    lightboxCaption.textContent = alt;
-                    lightbox.classList.add('active');
-                    document.body.style.overflow = 'hidden';
-                });
-            });
-            
-            // Close lightbox
-            if (lightboxClose) {
-                lightboxClose.addEventListener('click', function() {
-                    lightbox.classList.remove('active');
-                    document.body.style.overflow = '';
-                });
-            }
-            
-            // Close on background click
-            lightbox.addEventListener('click', function(e) {
-                if (e.target === lightbox) {
-                    lightbox.classList.remove('active');
-                    document.body.style.overflow = '';
-                }
-            });
-            
-            // Close on Escape key
-            document.addEventListener('keydown', function(e) {
-                if (e.key === 'Escape' && lightbox.classList.contains('active')) {
-                    lightbox.classList.remove('active');
-                    document.body.style.overflow = '';
-                }
-            });
-        });
-    </script>
-</body>
-    <!-- Google tag (gtag.js) -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=AW-17869355569">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "HomeAndConstructionBusiness",
+  "name": "Elegant Windows & Doors",
+  "image": "https://elegantwindowsdoors.com/images/logo/logo-mark-480.png",
+  "url": "https://elegantwindowsdoors.com/",
+  "email": "info@elegantwindowsdoors.com",
+  "address": { "@type": "PostalAddress", "streetAddress": "11721 Co Rd J, Bay 2", "addressLocality": "Nelson", "addressRegion": "MO", "postalCode": "65347", "addressCountry": "US" },
+  "areaServed": ["Sedalia MO", "Kansas City MO", "Columbia MO", "Jefferson City MO", "Central Missouri"],
+  "contactPoint": [
+    { "@type": "ContactPoint", "telephone": "+1-660-281-7001", "contactType": "customer service", "availableLanguage": "English" },
+    { "@type": "ContactPoint", "telephone": "+1-660-619-0827", "contactType": "customer service", "availableLanguage": "Russian" }
+  ]
+}
 </script>
+
+<script async src="https://www.googletagmanager.com/gtag/js?id=AW-17869355569"></script>
 <script>
   window.dataLayer = window.dataLayer || [];
   function gtag(){dataLayer.push(arguments);}
   gtag('js', new Date());
-
   gtag('config', 'AW-17869355569');
 </script>
-</html>
+</head>
+<body class="bg-white">
 
+<header class="site-header">
+  <nav class="container-wide">
+      <input type="checkbox" id="mobileMenuToggle" class="peer sr-only">
+    <div class="flex items-center justify-between py-3">
+      <a href="index.html" class="shrink-0" aria-label="Elegant Windows & Doors — home">
+        <img src="images/logo/logo-mark-480.png" alt="Elegant Windows & Doors" class="logo-mark">
+      </a>
+      <ul class="hidden lg:flex items-center gap-9 site-nav">
+        <li><a href="index.html">Home</a></li>
+        <li><a href="windows.html" class="active">Windows</a></li>
+        <li><a href="doors.html">Doors</a></li>
+        <li><a href="certifications.html">Certifications</a></li>
+        <li><a href="gallery.html">Projects</a></li>
+      </ul>
+      <div class="hidden lg:flex items-center gap-6">
+        <a href="tel:6602817001" class="text-sm font-semibold" style="color:var(--ink-soft)">(660) 281-7001</a>
+        <a href="contact.html" class="btn btn-gold btn-sm">Get a Free Estimate</a>
+      </div>
+      <label for="mobileMenuToggle" id="mobileMenuBtn" class="lg:hidden text-2xl cursor-pointer leading-none select-none" aria-label="Toggle menu">☰</label>
+    </div>
+    <ul id="mobileMenu" class="hidden peer-checked:flex lg:hidden flex-col gap-1 pb-6 border-t border-black/10 pt-4 mt-1">
+      <li><a href="index.html" class="block py-2 font-semibold text-[var(--ink)]">Home</a></li>
+      <li><a href="windows.html" class="block py-2 font-semibold" style="color:var(--gold-dim)">Windows</a></li>
+      <li><a href="doors.html" class="block py-2 font-semibold text-[var(--ink)]">Doors</a></li>
+      <li><a href="certifications.html" class="block py-2 font-semibold text-[var(--ink)]">Certifications</a></li>
+      <li><a href="gallery.html" class="block py-2 font-semibold text-[var(--ink)]">Projects</a></li>
+      <li class="pt-2"><a href="tel:6602817001" class="block py-2 font-semibold text-[var(--ink)]">(660) 281-7001 — EN</a></li>
+      <li><a href="tel:6606190827" class="block py-2 font-semibold text-[var(--ink)]">(660) 619-0827 — RU</a></li>
+      <li class="pt-2"><a href="contact.html" class="btn btn-gold block text-center">Get a Free Estimate</a></li>
+    </ul>
+  </nav>
+</header>
+
+<main>
+
+  <!-- Page hero -->
+  <section class="relative min-h-[56vh] flex items-end overflow-hidden bg-near-black">
+    <picture class="absolute inset-0">
+      <source srcset="images/projects/triple-window-row-bronze-frame.webp" type="image/webp">
+      <img src="images/projects/triple-window-row-bronze-frame.jpg" alt="Row of tall windows with bronze frames, installed on Hardie board siding" class="w-full h-full object-cover" width="2000" height="1333">
+    </picture>
+    <div class="absolute inset-0" style="background:linear-gradient(0deg, rgba(11,11,11,0.82) 0%, rgba(11,11,11,0.25) 60%);"></div>
+    <div class="container-wide relative z-10 pb-14 pt-32 on-dark">
+      <p class="eyebrow mb-4">Windows</p>
+      <h1 class="text-h1 font-display max-w-2xl">Window Systems Engineered for Comfort</h1>
+      <p class="mt-4 text-lg max-w-xl body-soft">European-style uPVC and aluminum profiles, matched to Missouri's climate and professionally installed.</p>
+    </div>
+  </section>
+
+  <!-- uPVC Product family -->
+  <section class="section bg-white">
+    <div class="container-wide">
+      <div class="max-w-2xl mb-14" data-reveal>
+        <p class="eyebrow">uPVC Product Family</p>
+        <h2 class="text-h2 mt-2">Three depths of the same idea: a well-sealed frame</h2>
+        <p class="body-soft mt-4">Every uPVC series shares the same multi-chamber construction principle — more chambers and greater frame depth mean better insulation and a quieter home. The right series depends on the opening and how much performance the room needs.</p>
+      </div>
+
+      <div class="grid md:grid-cols-3 hairline-list md:hairline-list-none border-t md:border-t-0" style="border-color:var(--line)" data-reveal>
+        <div class="p-0 md:pr-10 py-8 md:py-0 md:border-r" style="border-color:var(--line)">
+          <p class="font-display text-5xl" style="color:var(--gold)">58</p>
+          <h3 class="text-h3 mt-3">Classic Dependability</h3>
+          <p class="body-soft text-sm mt-1 mb-4">2-1/4" depth · 3-chamber</p>
+          <p class="body-soft">The standard window and door layout for typical residential openings. A budget-conscious profile without compromising frame integrity.</p>
+        </div>
+        <div class="p-0 md:px-10 py-8 md:py-0 md:border-r" style="border-color:var(--line)">
+          <p class="font-display text-5xl" style="color:var(--gold)">71</p>
+          <h3 class="text-h3 mt-3">High Thermal Efficiency</h3>
+          <p class="body-soft text-sm mt-1 mb-4">2-3/4" depth · 6-chamber</p>
+          <p class="body-soft">Advanced 6-chamber construction for diverse climate zones that need real heating and cooling retention through Missouri's seasons.</p>
+        </div>
+        <div class="p-0 md:pl-10 py-8 md:py-0">
+          <p class="font-display text-5xl" style="color:var(--gold)">80</p>
+          <h3 class="text-h3 mt-3">Ultra-Premium Shield</h3>
+          <p class="body-soft text-sm mt-1 mb-4">3-1/8" depth · 7-chamber</p>
+          <p class="body-soft">A triple-gasket weatherseal system with an additional central gasket, built for the least air leakage and the most sound deadening.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Cross-section signature moment -->
+  <section class="section bg-graphite on-dark">
+    <div class="container-wide grid lg:grid-cols-2 gap-14 items-center">
+      <div data-reveal>
+        <p class="eyebrow">The Cross-Section</p>
+        <h2 class="text-h2 mt-2 mb-6">What's actually inside the frame</h2>
+        <p class="body-soft mb-8 max-w-md">Every profile is multi-chambered uPVC with steel-reinforced corners, a warm-edge spacer bar, and an insulated glass unit sealed into place — not a hollow shell painted to look substantial.</p>
+
+        <p class="eyebrow mb-4">Thermal Resistance (R-value, h·ft²·°F/Btu)</p>
+        <div class="space-y-4 max-w-md">
+          <div class="spec-row">
+            <span class="text-sm font-semibold body-soft">Series 58</span>
+            <div class="spec-track"><div class="spec-fill" style="width:60%"></div></div>
+            <span class="text-sm font-semibold" style="color:var(--gold)">R-3.5</span>
+          </div>
+          <div class="spec-row">
+            <span class="text-sm font-semibold body-soft">FT 72 (Aluminum)</span>
+            <div class="spec-track"><div class="spec-fill" style="width:74%"></div></div>
+            <span class="text-sm font-semibold" style="color:var(--gold)">R-4.3</span>
+          </div>
+          <div class="spec-row">
+            <span class="text-sm font-semibold body-soft">Series 71</span>
+            <div class="spec-track"><div class="spec-fill" style="width:83%"></div></div>
+            <span class="text-sm font-semibold" style="color:var(--gold)">R-4.8</span>
+          </div>
+          <div class="spec-row">
+            <span class="text-sm font-semibold body-soft">Series 80</span>
+            <div class="spec-track"><div class="spec-fill" style="width:100%"></div></div>
+            <span class="text-sm font-semibold" style="color:var(--gold)">R-5.8</span>
+          </div>
+        </div>
+        <p class="body-soft text-sm mt-4 max-w-md">Higher is better. Series 80's multi-chamber configuration is equivalent to a U-factor below 0.18.</p>
+      </div>
+
+      <div class="media-frame" data-reveal>
+        <picture>
+          <source srcset="images/tech/window-profile-cutaway-anthracite.webp" type="image/webp">
+          <img src="images/tech/window-profile-cutaway-anthracite.jpg" loading="lazy" width="655" height="1200" alt="Cross-section render of a multi-chamber uPVC window profile with triple glazing" class="w-full h-auto">
+        </picture>
+      </div>
+    </div>
+  </section>
+
+  <!-- Aluminum + Sliding systems -->
+  <section class="section bg-white">
+    <div class="container-wide grid md:grid-cols-2 gap-16">
+      <div data-reveal>
+        <p class="eyebrow">Architectural Aluminum</p>
+        <h2 class="text-h2 mt-2 mb-5">For larger openings and heavier glass</h2>
+        <p class="body-soft mb-4">Series 38 and 46M are non-thermal aluminum solutions suited to interior vestibules and partitions. For exterior applications, the FT 72 thermal-break system uses polyamide strips to deliver structural stability for heavier glazed configurations — narrow sightlines, high mechanical strength.</p>
+      </div>
+      <div data-reveal>
+        <p class="eyebrow">Premium Sliding Systems</p>
+        <h2 class="text-h2 mt-2 mb-5">Wide openings, engineered to move smoothly</h2>
+        <ul class="hairline-list">
+          <li class="py-4"><span class="font-semibold">HS 180 Lift-and-Slide</span><p class="body-soft mt-1">Thermal-break aluminum, sashes up to 10.5 ft (3.2 m) tall and 880 lbs (400 kg), with exceptional wind and water tightness.</p></li>
+          <li class="py-4"><span class="font-semibold">ISS 147 Parallel-Sliding</span><p class="body-soft mt-1">uPVC with active double-contour sealing — continuous compression, no lifting required to slide. Sashes up to 6.5 × 8.2 ft.</p></li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- Customization -->
+  <section class="section bg-cream">
+    <div class="container-wide">
+      <div class="max-w-2xl mb-14" data-reveal>
+        <p class="eyebrow">Customization</p>
+        <h2 class="text-h2 mt-2">Finishes, glass, and hardware to match the house</h2>
+      </div>
+      <div class="grid md:grid-cols-3 gap-10" data-reveal>
+        <div>
+          <h3 class="text-h3 mb-2">Finishes &amp; Swatches</h3>
+          <p class="body-soft">Over 50 architectural woodgrain laminations and durable polymer foil color swatches, inside and out.</p>
+        </div>
+        <div>
+          <h3 class="text-h3 mb-2">High-Performance Glass</h3>
+          <p class="body-soft">Low-E glazing with warm-edge spacer bars and argon fill, up to triple-glazed units on the Series 80 profile.</p>
+        </div>
+        <div>
+          <h3 class="text-h3 mb-2">Testing &amp; Engineering</h3>
+          <p class="body-soft">Profiles engineered against AAMA and NFRC testing metrics for air infiltration, water deflection, and wind load.</p>
+        </div>
+      </div>
+      <p class="body-soft text-sm mt-10 max-w-2xl">These are manufacturer engineering specifications, not certifications held by Elegant Windows &amp; Doors. See <a href="certifications.html" class="underline" style="color:var(--gold-dim)">Certifications</a> for how we explain them to homeowners.</p>
+    </div>
+  </section>
+
+  <!-- Related projects -->
+  <section class="section bg-white">
+    <div class="container-wide">
+      <div class="flex items-end justify-between mb-10" data-reveal>
+        <h2 class="text-h2">Recent window installations</h2>
+        <a href="gallery.html" class="font-semibold shrink-0 hidden sm:block" style="color:var(--gold-dim)">View All Projects →</a>
+      </div>
+      <div class="grid sm:grid-cols-3 gap-5" data-reveal>
+        <a href="gallery.html" class="media-frame img-hover aspect-[4/5]"><img src="images/projects/thumb/window-detail-grey-facade.jpg" loading="lazy" width="416" height="900" alt="Window frame detail on grey siding" class="w-full h-full"></a>
+        <a href="gallery.html" class="media-frame img-hover aspect-[4/5]"><img src="images/projects/thumb/window-installation-corner-detail.jpg" loading="lazy" width="900" height="600" alt="Corner window installation detail" class="w-full h-full"></a>
+        <a href="gallery.html" class="media-frame img-hover aspect-[4/5]"><img src="images/projects/thumb/framing-stage-window-openings.jpg" loading="lazy" width="900" height="600" alt="Window openings during the framing stage" class="w-full h-full"></a>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section class="section-tight bg-near-black on-dark">
+    <div class="container-wide text-center">
+      <h2 class="text-h2 font-display">Ready to Upgrade Your Windows?</h2>
+      <p class="body-soft mt-4 max-w-xl mx-auto">Get a free, no-obligation estimate. We'll help you choose the right series for each opening and explain the pricing clearly.</p>
+      <div class="mt-8"><a href="contact.html" class="btn btn-gold">Get a Free Estimate</a></div>
+    </div>
+  </section>
+
+</main>
+
+<footer class="bg-near-black on-dark border-t" style="border-color:var(--line-on-dark)">
+  <div class="container-wide py-16 grid md:grid-cols-[1.3fr_1fr_1fr] gap-12">
+    <div>
+      <img src="images/logo/logo-mark-480.png" alt="Elegant Windows & Doors" class="h-14 w-auto mb-5">
+      <p class="body-soft max-w-xs">Sales, supply, and professional installation of European-style and American windows and doors.</p>
+      <p class="body-soft mt-4 max-w-xs">11721 Co Rd J, Bay 2<br>Nelson, MO 65347<br>Office visits by appointment</p>
+    </div>
+    <div>
+      <h3 class="eyebrow mb-4">Explore</h3>
+      <ul class="space-y-2.5 body-soft">
+        <li><a href="windows.html" class="hover:text-white transition">Windows</a></li>
+        <li><a href="doors.html" class="hover:text-white transition">Doors</a></li>
+        <li><a href="certifications.html" class="hover:text-white transition">Certifications</a></li>
+        <li><a href="gallery.html" class="hover:text-white transition">Projects</a></li>
+        <li><a href="contact.html" class="hover:text-white transition">Free Estimate</a></li>
+      </ul>
+    </div>
+    <div>
+      <h3 class="eyebrow mb-4">Contact</h3>
+      <ul class="space-y-2.5 body-soft">
+        <li><a href="tel:6602817001" class="hover:text-white transition">(660) 281-7001 — EN</a></li>
+        <li><a href="tel:6606190827" class="hover:text-white transition">(660) 619-0827 — RU</a></li>
+        <li><a href="mailto:info@elegantwindowsdoors.com" class="hover:text-white transition">info@elegantwindowsdoors.com</a></li>
+        <li class="pt-2">Mon–Fri 8am–6pm<br>Sat 9am–4pm · Sun Closed</li>
+      </ul>
+    </div>
+  </div>
+  <div class="border-t" style="border-color:var(--line-on-dark)">
+    <div class="container-wide py-6 flex flex-wrap items-center justify-between gap-3 text-sm body-soft">
+      <p>&copy; <span id="footerYear"></span> Elegant Windows &amp; Doors. Licensed &amp; insured. Serving Central Missouri.</p>
+      <p>Sedalia · Kansas City · Columbia · Jefferson City &amp; surrounding areas</p>
+    </div>
+  </div>
+</footer>
+
+<script src="config.js"></script>
+<script src="script.js"></script>
+<script src="site.js"></script>
+<script>document.getElementById('footerYear').textContent = new Date().getFullYear();</script>
+</body>
+</html>
