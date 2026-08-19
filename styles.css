@@ -518,3 +518,48 @@ hr.line { border: none; border-top: 1px solid var(--line); }
   gap: 0.4rem;
 }
 .resource-row:hover .resource-download { color: var(--gold-dim); transform: translateX(2px); }
+
+/* ==========================================================================
+   Catalog cards (homepage) — cover-image "shelf" presentation
+   ========================================================================== */
+
+.catalog-card { display: block; text-decoration: none; }
+
+.catalog-cover {
+  position: relative;
+  aspect-ratio: 3 / 4;
+  overflow: hidden;
+  background: var(--graphite);
+  box-shadow: 0 18px 34px -14px rgba(11,11,11,0.32);
+  transition: transform 0.35s var(--ease), box-shadow 0.35s var(--ease);
+}
+.catalog-cover img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.catalog-cover::before {
+  /* subtle spine shadow — reinforces the printed-catalog feel */
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, rgba(0,0,0,0.32) 0%, rgba(0,0,0,0) 7%);
+  z-index: 2;
+  pointer-events: none;
+}
+.catalog-cover::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  box-shadow: inset 0 0 0 1px rgba(255,255,255,0.06);
+  z-index: 2;
+  pointer-events: none;
+}
+.catalog-card:hover .catalog-cover { transform: translateY(-6px); box-shadow: 0 26px 44px -14px rgba(11,11,11,0.4); }
+
+.catalog-card h3 {
+  margin-top: 1.1rem;
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--ink);
+  line-height: 1.3;
+  transition: color 0.2s var(--ease);
+}
+.catalog-card:hover h3 { color: var(--gold-dim); }
+.catalog-card .catalog-meta { font-size: 0.8rem; color: var(--ink-faint); margin-top: 0.3rem; }
