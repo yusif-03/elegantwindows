@@ -563,3 +563,23 @@ hr.line { border: none; border-top: 1px solid var(--line); }
 }
 .catalog-card:hover h3 { color: var(--gold-dim); }
 .catalog-card .catalog-meta { font-size: 0.8rem; color: var(--ink-faint); margin-top: 0.3rem; }
+
+.catalog-shelf {
+  display: flex;
+  gap: 1.5rem;
+  overflow-x: auto;
+  scroll-snap-type: x proximity;
+  padding-bottom: 0.75rem;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: thin;
+  scrollbar-color: var(--line) transparent;
+}
+.catalog-shelf::-webkit-scrollbar { height: 6px; }
+.catalog-shelf::-webkit-scrollbar-track { background: transparent; }
+.catalog-shelf::-webkit-scrollbar-thumb { background: var(--line); border-radius: 3px; }
+.catalog-shelf .catalog-card {
+  flex: none;
+  width: 200px;
+  scroll-snap-align: start;
+}
+@media (min-width: 640px) { .catalog-shelf .catalog-card { width: 228px; } }
